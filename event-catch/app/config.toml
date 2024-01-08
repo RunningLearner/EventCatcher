@@ -1,0 +1,6 @@
+[database.mongo]
+dataSource = ""
+db = ""
+nftCollection = ""
+nft = ""
+tx = ""
