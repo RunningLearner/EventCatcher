@@ -1,9 +1,15 @@
 package repository
 
-type Repository struct{}
+import "event-catch/config"
 
-func NewRepository() *Repository {
-	r := Repository{}
+type Repository struct {
+	config *config.Config
+}
 
-	return &r
+func NewRepository(config *config.Config) (*Repository, error) {
+	r := Repository{
+		config: config,
+	}
+
+	return &r, nil
 }

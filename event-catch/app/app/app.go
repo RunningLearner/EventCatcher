@@ -1,12 +1,27 @@
 package app
 
+import (
+	"event-catch/config"
+	"event-catch/repository"
+	"fmt"
+)
 
-type App struct{
+type App struct {
+	config *config.Config
 
+	repository *repository.Repository
 }
 
-func NewApp() *App{
-	a := App{}
+func NewApp(config *config.Config) {
+	a := App{
+		config: config,
+	}
 
-	return &a
+	var err error
+
+	if a.repository, err = repository.NewRepository(config); err != nil {
+		panic(err)
+	}
+
+	fmt.Println(a)
 }

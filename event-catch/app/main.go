@@ -3,12 +3,13 @@ package main
 import (
 	"event-catch/app/app"
 	"event-catch/config"
-	"fmt"
+	"flag"
 )
 
-func main() {
-	config.NewConfig("./config.toml")
-	a := app.NewApp()
+var configFlag = flag.String("config", "./config.toml", "toml env file not found")
 
-	fmt.Println(a)
+func main() {
+	flag.Parse()
+
+	app.NewApp(config.NewConfig(*configFlag))
 }
