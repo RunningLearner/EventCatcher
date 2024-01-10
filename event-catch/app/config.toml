@@ -1,0 +1,6 @@
+[database.mongo]
+dataSource = "mongodb+srv://test:1111@super-mongo.f9qbhma.mongodb.net/?retryWrites=true&w=majority"
+db = "event-catch-module"
+nftCollection = "nftCollection"
+nft = "nft"
+tx = "tx"
