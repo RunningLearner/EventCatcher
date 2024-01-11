@@ -17,6 +17,10 @@ type Config struct {
 			Tx            string
 		}
 	}
+
+	Node struct {
+		Uri string
+	}
 }
 
 func NewConfig(path string) *Config {

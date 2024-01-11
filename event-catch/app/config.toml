@@ -4,3 +4,6 @@ db = "event-catch-module"
 nftCollection = "nftCollection"
 nft = "nft"
 tx = "tx"
+
+[node]
+uri = "test"

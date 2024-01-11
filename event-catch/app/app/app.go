@@ -2,6 +2,7 @@ package app
 
 import (
 	"event-catch/config"
+	"event-catch/event"
 	"event-catch/repository"
 	"fmt"
 )
@@ -10,6 +11,7 @@ type App struct {
 	config *config.Config
 
 	repository *repository.Repository
+	scan *event.Scan
 }
 
 func NewApp(config *config.Config) {
@@ -24,4 +26,8 @@ func NewApp(config *config.Config) {
 	}
 
 	fmt.Println(a)
+
+	if a.scan, err = event.NewScan(config); err != nil{
+		panic(err)
+	}
 }
