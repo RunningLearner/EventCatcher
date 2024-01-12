@@ -6,4 +6,4 @@ nft = "nft"
 tx = "tx"
 
 [node]
-uri = "test"
+uri = "https://polygon-mumbai.infura.io/v3/cea0d8acc3e4470dab059c41a00c6e28"
