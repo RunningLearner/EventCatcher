@@ -39,7 +39,7 @@ func (s *Scan) lookingScan(
 	// TODO 캐치애햐하는 이벤트
 	eventLog chan<- []ethType.Log,
 ) {
-	startReadBlock, to := startBlock, int64(0)
+	startReadBlock, to := startBlock, uint64(0)
 
 	s.FilterQuery = ethereum.FilterQuery{
 		Addresses: []common.Address{},
@@ -63,8 +63,26 @@ func (s *Scan) lookingScan(
 				s.FilterQuery.FromBlock = big.NewInt(startReadBlock)
 				s.FilterQuery.ToBlock = big.NewInt(int64(to))
 
+				tryCount := 1
+
+			Retry:
 				if logs, err := s.client.FilterLogs(ctx, s.FilterQuery); err != nil {
-					//TODO from, to 블럭만 변형시켜서 다시 호출
+
+					if tryCount == 3 {
+						fmt.Println("failed to get Filter", "err", err.Error())
+						break
+					} else {
+						newTo := big.NewInt(int64(to) - 1)
+						newFrom := big.NewInt(startBlock - 1)
+
+						s.FilterQuery.ToBlock = newTo
+						s.FilterQuery.FromBlock = newFrom
+
+						tryCount++
+
+						goto Retry
+					}
+
 				} else if len(logs) > 0 {
 					eventLog <- logs
 
