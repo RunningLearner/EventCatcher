@@ -6,6 +6,7 @@ import (
 	"event-catch/repository"
 	"fmt"
 
+	ethType "github.com/ethereum/go-ethereum/core/types"
 	"github.com/ethereum/go-ethereum/ethclient"
 )
 
@@ -16,6 +17,7 @@ type App struct {
 
 	repository *repository.Repository
 	scan       *event.Scan
+	catch      *event.Catch
 }
 
 func NewApp(config *config.Config) {
@@ -34,7 +36,13 @@ func NewApp(config *config.Config) {
 			panic(err)
 		}
 
-		if a.scan, err = event.NewScan(config, a.client); err != nil {
+		var eventChan chan []ethType.Log
+
+		if a.scan, eventChan, err = event.NewScan(config, a.client); err != nil {
+			panic(err)
+		}
+
+		if a.catch, err = event.NewCatch(config, a.client, eventChan); err != nil {
 			panic(err)
 		}
 	}
