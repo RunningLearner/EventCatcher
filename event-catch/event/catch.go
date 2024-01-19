@@ -2,7 +2,6 @@ package event
 
 import (
 	"context"
-	"crypto"
 	"event-catch/config"
 	"event-catch/types"
 
@@ -26,9 +25,8 @@ func NewCatch(config *config.Config, client *ethclient.Client, eventChan chan []
 		client: client,
 	}
 
-	// Transfer(address, address, uint256)
 	c.needToCatchEvent = map[common.Hash]types.NeedToCatchEvent{
-		common.BytesToAddress(crypto.Keccak256([]byte("Transfer(address, address, uint256)"))): {
+		common.BytesToHash(crypto.Keccak256([]byte("Transfer(address, address, uint256)"))): {
 			NeedToCatchEventFunc: c.Transfer,
 		},
 	}
@@ -38,7 +36,7 @@ func NewCatch(config *config.Config, client *ethclient.Client, eventChan chan []
 	return c, nil
 }
 
-func (c *Catch) Transfer(e *types.Log, tx *types.Transaction) {}
+func (c *Catch) Transfer(e *ethType.Log, tx *ethType.Transaction) {}
 
 // 이벤트 캐치 시작
 func (c *Catch) startToCatch(events <-chan []ethType.Log) {
@@ -66,4 +64,14 @@ func (c *Catch) startToCatch(events <-chan []ethType.Log) {
 			}
 		}
 	}
+}
+
+func (c *Catch) GetEventsToCatch() []common.Hash {
+	eventsToCatch := make([]common.Hash, 0)
+
+	for e := range c.needToCatchEvent {
+		eventsToCatch = append(eventsToCatch, e)
+	}
+
+	return eventsToCatch
 }

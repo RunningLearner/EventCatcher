@@ -38,11 +38,13 @@ func NewApp(config *config.Config) {
 
 		var eventChan chan []ethType.Log
 
-		if a.scan, eventChan, err = event.NewScan(config, a.client); err != nil {
+		//getEventsToCatch
+
+		if a.catch, err = event.NewCatch(config, a.client, eventChan); err != nil {
 			panic(err)
 		}
 
-		if a.catch, err = event.NewCatch(config, a.client, eventChan); err != nil {
+		if a.scan, eventChan, err = event.NewScan(config, a.client, a.catch.GetEventsToCatch()); err != nil {
 			panic(err)
 		}
 	}
