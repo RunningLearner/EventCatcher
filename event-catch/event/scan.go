@@ -28,13 +28,14 @@ func NewScan(config *config.Config, client *ethclient.Client, catchEventList []c
 
 	eventlog := make(chan []ethType.Log, 100)
 
-	scanCollection := common.HexToAddress("")
+	scanCollection := common.HexToAddress("0xB716DABd719eEd8391b66F0734ABB372f3A74183")
 
 	go s.lookingScan(config.Node.StartBlock, scanCollection, catchEventList, eventlog)
 
 	return s, eventlog, nil
 }
 
+// block num 45035698
 func (s *Scan) lookingScan(
 	startBlock int64,
 	scanCollection common.Address,
