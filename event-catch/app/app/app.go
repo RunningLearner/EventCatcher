@@ -47,5 +47,8 @@ func NewApp(config *config.Config) {
 		if a.scan, eventChan, err = event.NewScan(config, a.client, a.catch.GetEventsToCatch()); err != nil {
 			panic(err)
 		}
+
+		for {
+		}
 	}
 }

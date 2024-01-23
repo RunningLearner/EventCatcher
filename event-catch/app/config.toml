@@ -7,4 +7,4 @@ tx = "tx"
 
 [node]
 uri = "https://polygon-mumbai.infura.io/v3/cea0d8acc3e4470dab059c41a00c6e28"
-startBlock = 1
+startBlock = 45072015

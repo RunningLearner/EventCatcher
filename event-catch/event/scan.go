@@ -28,14 +28,16 @@ func NewScan(config *config.Config, client *ethclient.Client, catchEventList []c
 
 	eventlog := make(chan []ethType.Log, 100)
 
-	scanCollection := common.HexToAddress("0xB716DABd719eEd8391b66F0734ABB372f3A74183")
+	scanCollection := common.HexToAddress("0x16bc64a11ff2bb9f27c1e38c07f8111af2398dd1")
 
 	go s.lookingScan(config.Node.StartBlock, scanCollection, catchEventList, eventlog)
 
 	return s, eventlog, nil
 }
 
-// block num 45035698
+// 0x16bc64a11ff2bb9f27c1e38c07f8111af2398dd1
+// block num 45072015
+// 민트 블록 45072044
 func (s *Scan) lookingScan(
 	startBlock int64,
 	scanCollection common.Address,
@@ -62,6 +64,7 @@ func (s *Scan) lookingScan(
 			to = maxBlock
 
 			if to > uint64(startReadBlock) {
+				fmt.Println("from Block", s.FilterQuery.FromBlock, "to Block", to)
 				// s.FilterQuery.FromBlock(startReadBlock)
 				s.FilterQuery.FromBlock = big.NewInt(startReadBlock)
 				s.FilterQuery.ToBlock = big.NewInt(int64(to))
