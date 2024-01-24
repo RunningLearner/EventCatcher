@@ -5,6 +5,7 @@ import (
 	"event-catch/config"
 	"event-catch/types"
 	"fmt"
+	"math/big"
 
 	"github.com/ethereum/go-ethereum/common"
 	ethType "github.com/ethereum/go-ethereum/core/types"
@@ -20,7 +21,7 @@ type Catch struct {
 	needToCatchEvent map[common.Hash]types.NeedToCatchEvent
 }
 
-func NewCatch(config *config.Config, client *ethclient.Client, eventChan chan []ethType.Log) (*Catch, error) {
+func NewCatch(config *config.Config, client *ethclient.Client) (*Catch, error) {
 	c := &Catch{
 		config: config,
 		client: client,
@@ -32,17 +33,29 @@ func NewCatch(config *config.Config, client *ethclient.Client, eventChan chan []
 		},
 	}
 
-	go c.startToCatch(eventChan)
-
 	return c, nil
 }
 
 func (c *Catch) Transfer(e *ethType.Log, tx *ethType.Transaction) {
 	fmt.Println("들어왔습니다.")
+
+	// e.Topics[1][:] 인덱싱이 되어있는경우 이벤트 가져오는 방법
+	// e.Topics[2][:]
+
+	//인덱스가 안되있는 경우
+	// e.Data[:0x20]
+	// e.Data[0x20:0x40]
+
+	from := common.BytesToAddress(e.Topics[1][:])
+	to := common.BytesToAddress(e.Topics[2][:])
+	tokenID := new(big.Int).SetBytes(e.Topics[3][:])
+
+	fmt.Println(from, to, tokenID)
+
 }
 
 // 이벤트 캐치 시작
-func (c *Catch) startToCatch(events <-chan []ethType.Log) {
+func (c *Catch) StartToCatch(events <-chan []ethType.Log) {
 	for event := range events {
 		ctx := context.Background()
 		txList := make(map[common.Hash]*ethType.Transaction)
