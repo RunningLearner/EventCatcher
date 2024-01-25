@@ -38,7 +38,7 @@ func NewApp(config *config.Config) {
 
 		//getEventsToCatch
 
-		if a.catch, err = event.NewCatch(config, a.client); err != nil {
+		if a.catch, err = event.NewCatch(config, a.client, a.repository); err != nil {
 			panic(err)
 		}
 

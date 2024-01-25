@@ -3,6 +3,7 @@ package event
 import (
 	"context"
 	"event-catch/config"
+	"event-catch/repository"
 	"event-catch/types"
 	"fmt"
 	"math/big"
@@ -16,15 +17,17 @@ import (
 type Catch struct {
 	config *config.Config
 
-	client *ethclient.Client
+	client     *ethclient.Client
+	repository *repository.Repository
 
 	needToCatchEvent map[common.Hash]types.NeedToCatchEvent
 }
 
-func NewCatch(config *config.Config, client *ethclient.Client) (*Catch, error) {
+func NewCatch(config *config.Config, client *ethclient.Client, repository *repository.Repository) (*Catch, error) {
 	c := &Catch{
-		config: config,
-		client: client,
+		config:     config,
+		client:     client,
+		repository: repository,
 	}
 
 	c.needToCatchEvent = map[common.Hash]types.NeedToCatchEvent{
@@ -49,6 +52,12 @@ func (c *Catch) Transfer(e *ethType.Log, tx *ethType.Transaction) {
 	from := common.BytesToAddress(e.Topics[1][:])
 	to := common.BytesToAddress(e.Topics[2][:])
 	tokenID := new(big.Int).SetBytes(e.Topics[3][:])
+
+	chainId, _ := c.client.ChainID(context.Background())
+	sender, _ := ethType.Sender(ethType.NewLondonSigner(big.NewInt(80001)), tx)
+
+	// 1. tx에 대한 이벤트 넣어주기
+	c.repository.UpsertTxEvent(from, to, sender, tokenID, e.TxHash.Hex())
 
 	fmt.Println(from, to, tokenID)
 
