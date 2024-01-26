@@ -54,13 +54,17 @@ func (c *Catch) Transfer(e *ethType.Log, tx *ethType.Transaction) {
 	tokenID := new(big.Int).SetBytes(e.Topics[3][:])
 
 	chainId, _ := c.client.ChainID(context.Background())
-	sender, _ := ethType.Sender(ethType.NewLondonSigner(big.NewInt(80001)), tx)
+	sender, _ := ethType.Sender(ethType.NewLondonSigner(chainId), tx)
 
 	// 1. tx에 대한 이벤트 넣어주기
-	c.repository.UpsertTxEvent(from, to, sender, tokenID, e.TxHash.Hex())
+	if err := c.repository.UpsertTxEvent(from, to, sender, tokenID, e.TxHash.Hex()); err != nil {
+		fmt.Println("fail to upsert Tx Event", "err", err)
+	} else if err = c.repository.UpsertTransferEvent(tokenID, to); err != nil {
+		// 2. NFT에 대한 이벤트 넣어주기
+		fmt.Println("fail to upsert NFT Event", "err", err)
+	}
 
-	fmt.Println(from, to, tokenID)
-
+	fmt.Println(from, to, tokenID, chainId)
 }
 
 // 이벤트 캐치 시작

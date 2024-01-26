@@ -65,6 +65,18 @@ func (r *Repository) UpsertTxEvent(from, to, sender common.Address, tokenID *big
 	return err
 }
 
-func (r *Repository) UpsertTransferEvent() {
+func (r *Repository) UpsertTransferEvent(tokenID *big.Int, to common.Address) error {
+	opt := options.Update().SetUpsert(true)
 
+	filter := bson.M{
+		"tokenID": tokenID.Int64(),
+	}
+
+	update := bson.M{"$set": bson.M{
+		"owner": hexutil.Encode(to[:]),
+	}}
+
+	_, err := r.NFT.UpdateOne(context.Background(), filter, update, opt)
+
+	return err
 }
